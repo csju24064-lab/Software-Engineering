@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>空手部 防具管理</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 p-4">
+
+    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h1 class="text-xl font-bold mb-4 text-center">🥋 空手部 防具管理</h1>
+
+        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+            <h2 class="font-bold mb-2">現在の在庫（面）</h2>
+            <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                <div class="bg-blue-100 p-2 rounded">船橋: <span id="count-funabashi" class="font-bold">0</span></div>
+                <div class="bg-green-100 p-2 rounded">駿河台: <span id="count-surugadai" class="font-bold">0</span></div>
+                <div class="bg-yellow-100 p-2 rounded">遠征: <span id="count-ensei" class="font-bold">0</span></div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">防具ID（手入力 / QR想定）</label>
+                <input type="text" id="armor-id" class="w-full p-2 border rounded" placeholder="例: MEN-001">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">移動先を選択</label>
+                <select id="destination" class="w-full p-2 border rounded">
+                    <option value="funabashi">船橋キャンパス</option>
+                    <option value="surugadai">駿河台キャンパス</option>
+                    <option value="ensei">遠征（持ち出し）</option>
+                </select>
+            </div>
+            <button onclick="updateStatus()" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700">
+                移動を確定する
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 本来はlocalStorageから読み込みますが、まずは簡易的なデータ
+        let inventory = { funabashi: 0, surugadai: 0, ensei: 0 };
+
+        function updateStatus() {
+            const id = document.getElementById('armor-id').value;
+            const dest = document.getElementById('destination').value;
+
+            if (!id) {
+                alert('防具IDを入力してください');
+                return;
+            }
+
+            // 在庫を増やす（※簡易ロジック）
+            inventory[dest] += 1;
+
+            // 画面の数字を書き換える
+            document.getElementById('count-funabashi').innerText = inventory.funabashi;
+            document.getElementById('count-surugadai').innerText = inventory.surugadai;
+            document.getElementById('count-ensei').innerText = inventory.ensei;
+
+            alert(`防具 ${id} を ${dest} に移動しました！`);
+            document.getElementById('armor-id').value = ''; // 入力欄をクリア
+        }
+    </script>
+</body>
+</html>
