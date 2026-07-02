@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>空手部 防具管理</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body class="bg-gray-100 p-4">
 
@@ -20,10 +21,22 @@
             </div>
         </div>
 
+        <div id="reader-container" class="hidden mb-6 p-4 border border-dashed border-gray-300 rounded-lg bg-black/5">
+            <div id="reader" class="w-full"></div>
+            <button onclick="stopScanner()" class="mt-2 w-full bg-gray-500 text-white p-2 rounded text-sm font-bold">
+                カメラを閉じる
+            </button>
+        </div>
+
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium mb-1">防具ID（手入力 / QR想定）</label>
-                <input type="text" id="armor-id" class="w-full p-2 border rounded" placeholder="例: MEN-001">
+                <div class="flex gap-2">
+                    <input type="text" id="armor-id" class="flex-1 p-2 border rounded" placeholder="例: MEN-001">
+                    <button onclick="startScanner()" class="bg-emerald-600 text-white px-3 py-2 rounded font-bold hover:bg-emerald-700 text-sm whitespace-nowrap">
+                        📷 QRスキャン
+                    </button>
+                </div>
             </div>
             <div>
                 <label class="block text-sm font-medium mb-1">移動先を選択</label>
@@ -40,9 +53,41 @@
     </div>
 
     <script>
-        // 本来はlocalStorageから読み込みますが、まずは簡易的なデータ
         let inventory = { funabashi: 0, surugadai: 0, ensei: 0 };
+        let html5QrcodeScanner = null;
 
+        // --- 📷 QRコード読み取りのJavaScript処理 ---
+        function startScanner() {
+            document.getElementById('reader-container').classList.remove('hidden');
+            if (!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5QrcodeScanner(
+                    "reader", { fps: 10, qrbox: { width: 200, height: 200 }, rememberLastUsedCamera: true }
+                );
+            }
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            document.getElementById('armor-id').value = decodedText; // 読み取った値を入力欄にセット
+            stopScanner();
+            alert(`QRコードを読み取りました: ${decodedText}`);
+        }
+
+        function onScanFailure(error) {
+            // エラーはスルー
+        }
+
+        function stopScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear().then(() => {
+                    document.getElementById('reader-container').classList.add('hidden');
+                }).catch(err => {
+                    console.error("カメラ停止エラー:", err);
+                });
+            }
+        }
+
+        // --- 在庫更新処理 ---
         function updateStatus() {
             const id = document.getElementById('armor-id').value;
             const dest = document.getElementById('destination').value;
@@ -52,16 +97,14 @@
                 return;
             }
 
-            // 在庫を増やす（※簡易ロジック）
             inventory[dest] += 1;
 
-            // 画面の数字を書き換える
             document.getElementById('count-funabashi').innerText = inventory.funabashi;
             document.getElementById('count-surugadai').innerText = inventory.surugadai;
             document.getElementById('count-ensei').innerText = inventory.ensei;
 
             alert(`防具 ${id} を ${dest} に移動しました！`);
-            document.getElementById('armor-id').value = ''; // 入力欄をクリア
+            document.getElementById('armor-id').value = ''; 
         }
     </script>
 </body>
