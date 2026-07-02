@@ -3,109 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>空手部 防具管理</title>
+    <title>空手部 防具管理システム</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
-<body class="bg-gray-100 p-4">
+<body class="bg-gray-100 min-h-screen p-4 md:p-8 text-gray-800">
 
-    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h1 class="text-xl font-bold mb-4 text-center">🥋 空手部 防具管理</h1>
+    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden p-6">
+        <header class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-blue-600 flex justify-center items-center gap-2">
+                🥋 空手部 防具管理
+            </h1>
+            <p class="text-sm text-gray-500 mt-1">リアルタイム在庫・拠点管理</p>
+        </header>
 
-        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h2 class="font-bold mb-2">現在の在庫（面）</h2>
-            <div class="grid grid-cols-3 gap-2 text-center text-sm">
-                <div class="bg-blue-100 p-2 rounded">船橋: <span id="count-funabashi" class="font-bold">0</span></div>
-                <div class="bg-green-100 p-2 rounded">駿河台: <span id="count-surugadai" class="font-bold">0</span></div>
-                <div class="bg-yellow-100 p-2 rounded">遠征: <span id="count-ensei" class="font-bold">0</span></div>
-            </div>
-        </div>
+        <section class="mb-8">
+            <h2 class="text-lg font-semibold border-b pb-2 mb-4 flex items-center gap-2">
+                📊 現在の在庫・所在状況
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="bg-blue-50 p-3 rounded-xl">
+                    <span class="font-bold text-blue-800 block mb-2">① 面 (MEN)</span>
+                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                        <div class="bg-white p-2 rounded-lg shadow-xs">
+                            <div class="text-gray-500 text-xs">船橋</div>
+                            <div id="stock-men-funabashi" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg shadow-xs">
+                            <div class="text-gray-500 text-xs">駿河台</div>
+                            <div id="stock-men-surugadai" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg shadow-xs">
+                            <div class="text-gray-500 text-xs">遠征</div>
+                            <div id="stock-men-ensei" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                    </div>
+                </div>
 
-        <div id="reader-container" class="hidden mb-6 p-4 border border-dashed border-gray-300 rounded-lg bg-black/5">
-            <div id="reader" class="w-full"></div>
-            <button onclick="stopScanner()" class="mt-2 w-full bg-gray-500 text-white p-2 rounded text-sm font-bold">
-                カメラを閉じる
-            </button>
-        </div>
-
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">防具ID（手入力 / QR想定）</label>
-                <div class="flex gap-2">
-                    <input type="text" id="armor-id" class="flex-1 p-2 border rounded" placeholder="例: MEN-001">
-                    <button onclick="startScanner()" class="bg-emerald-600 text-white px-3 py-2 rounded font-bold hover:bg-emerald-700 text-sm whitespace-nowrap">
-                        📷 QRスキャン
-                    </button>
+                <div class="bg-green-50 p-3 rounded-xl">
+                    <span class="font-bold text-green-800 block mb-2">② 胴 (DO)</span>
+                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                        <div class="bg-white p-2 rounded-lg shadow-xs">
+                            <div class="text-gray-500 text-xs">船橋</div>
+                            <div id="stock-do-funabashi" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg shadow-xs">
+                            <div class="text-gray-500 text-xs">駿河台</div>
+                            <div id="stock-do-surugadai" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg shadow-xs">
+                            <div class="text-gray-500 text-xs">遠征</div>
+                            <div id="stock-do-ensei" class="text-lg font-bold text-gray-800">0</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">移動先を選択</label>
-                <select id="destination" class="w-full p-2 border rounded">
-                    <option value="funabashi">船橋キャンパス</option>
-                    <option value="surugadai">駿河台キャンパス</option>
-                    <option value="ensei">遠征（持ち出し）</option>
-                </select>
+        </section>
+
+        <section class="space-y-6">
+            <h2 class="text-lg font-semibold border-b pb-2 mb-2 flex items-center gap-2">
+                🔄 移動データの入力
+            </h2>
+
+            <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 bg-gray-50 text-center">
+                <button id="btn-toggle-camera" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl shadow-md transition duration-200 cursor-pointer">
+                    📷 QRスキャンを起動する
+                </button>
+                <div id="qr-reader" class="mt-4 hidden overflow-hidden rounded-lg"></div>
             </div>
-            <button onclick="updateStatus()" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700">
-                移動を確定する
-            </button>
-        </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">防具ID (QRから自動入力)</label>
+                    <input type="text" id="input-armor-id" placeholder="例: MEN-001" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 bg-gray-50 font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">移動先を選択</label>
+                    <select id="select-location" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                        <option value="funabashi">船橋キャンパス</option>
+                        <option value="surugadai">駿河台キャンパス</option>
+                        <option value="ensei">遠征（持ち出し）</option>
+                    </select>
+                </div>
+
+                <button id="btn-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition duration-200 mt-2 cursor-pointer">
+                    移動を確定する
+                </button>
+            </div>
+        </section>
     </div>
 
     <script>
-        let inventory = { funabashi: 0, surugadai: 0, ensei: 0 };
+        // --- 1. データ構造と初期化 (保存機能) ---
+        // 保存データの初期状態（データがない場合）
+        const defaultData = {
+            men: { funabashi: 0, surugadai: 0, ensei: 0 },
+            do: { funabashi: 0, surugadai: 0, ensei: 0 }
+        };
+
+        // スマホ/PC内に保存されているデータを読み込む
+        let armorData = JSON.parse(localStorage.getItem('karateArmorData')) || defaultData;
+
+        // 画面の数字表示を最新データに書き換える関数
+        function updateDisplay() {
+            document.getElementById('stock-men-funabashi').innerText = armorData.men.funabashi;
+            document.getElementById('stock-men-surugadai').innerText = armorData.men.surugadai;
+            document.getElementById('stock-men-ensei').innerText = armorData.men.ensei;
+            document.getElementById('stock-do-funabashi').innerText = armorData.do.funabashi;
+            document.getElementById('stock-do-surugadai').innerText = armorData.do.surugadai;
+            document.getElementById('stock-do-ensei').innerText = armorData.do.ensei;
+        }
+
+        // データをスマホ内に「保存」する関数
+        function saveToStorage() {
+            localStorage.setItem('karateArmorData', JSON.stringify(armorData));
+            updateDisplay();
+        }
+
+        // アプリ起動時に数字を表示
+        updateDisplay();
+
+
+        // --- 2. QRコードスキャナーの処理 ---
         let html5QrcodeScanner = null;
+        const cameraButton = document.getElementById('btn-toggle-camera');
+        const qrReaderDiv = document.getElementById('qr-reader');
 
-        // --- 📷 QRコード読み取りのJavaScript処理 ---
-        function startScanner() {
-            document.getElementById('reader-container').classList.remove('hidden');
-            if (!html5QrcodeScanner) {
-                html5QrcodeScanner = new Html5QrcodeScanner(
-                    "reader", { fps: 10, qrbox: { width: 200, height: 200 }, rememberLastUsedCamera: true }
-                );
-            }
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-        }
-
-        function onScanSuccess(decodedText, decodedResult) {
-            document.getElementById('armor-id').value = decodedText; // 読み取った値を入力欄にセット
-            stopScanner();
-            alert(`QRコードを読み取りました: ${decodedText}`);
-        }
-
-        function onScanFailure(error) {
-            // エラーはスルー
-        }
-
-        function stopScanner() {
+        cameraButton.addEventListener('click', () => {
             if (html5QrcodeScanner) {
-                html5QrcodeScanner.clear().then(() => {
-                    document.getElementById('reader-container').classList.add('hidden');
-                }).catch(err => {
-                    console.error("カメラ停止エラー:", err);
-                });
-            }
-        }
-
-        // --- 在庫更新処理 ---
-        function updateStatus() {
-            const id = document.getElementById('armor-id').value;
-            const dest = document.getElementById('destination').value;
-
-            if (!id) {
-                alert('防具IDを入力してください');
-                return;
-            }
-
-            inventory[dest] += 1;
-
-            document.getElementById('count-funabashi').innerText = inventory.funabashi;
-            document.getElementById('count-surugadai').innerText = inventory.surugadai;
-            document.getElementById('count-ensei').innerText = inventory.ensei;
-
-            alert(`防具 ${id} を ${dest} に移動しました！`);
-            document.getElementById('armor-id').value = ''; 
-        }
-    </script>
-</body>
-</html>
+                // カメラ停止処理
+                html5QrcodeScanner.stop().then(() => {
+                    html5QrcodeScanner = null;
+                    qrReaderDiv.classList.add('hidden');
+                    cameraButton.innerText = "📷 QRスキャンを起動する";
+                    cameraButton.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl shadow-md transition duration-200 cursor-pointer";
+                }).catch(err => console.error(err));
+            } else {
+                // カメラ起動処理
+                qrReaderDiv.classList.remove('hidden');
+                cameraButton.innerText = "カメラを閉じる";
+                cameraButton.className = "w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-xl shadow-md transition duration-20
