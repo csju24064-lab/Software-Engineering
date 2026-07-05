@@ -194,7 +194,7 @@
 
         // --- QRコードカメラの制御 ---
         let html5QrcodeScanner = null;
-        let isScanning = false; // 連続読み込みを防ぐためのロック用変数
+        let isScanning = false; 
         const cameraButton = document.getElementById('btn-toggle-camera');
         const qrReaderDiv = document.getElementById('qr-reader');
 
@@ -223,13 +223,11 @@
                     { facingMode: "environment" },
                     { fps: 10, qrbox: { width: 250, height: 250 } },
                     (qrText) => {
-                        // ロックがかかっていればスキャン処理をスルーする
                         if (isScanning) return; 
-                        isScanning = true; // ロックをかける
+                        isScanning = true; 
 
-                        // 1回読んだらカメラを一時停止・終了させる
+                        // 【改善】ポップアップを出さずに、一瞬でカメラを閉じて入力欄に値をぶち込む
                         stopCamera().then(() => {
-                            alert("QRコード検出: " + qrText);
                             document.getElementById('input-armor-id').value = qrText.toUpperCase();
                         });
                     },
