@@ -144,4 +144,59 @@
                 // カメラ起動処理
                 qrReaderDiv.classList.remove('hidden');
                 cameraButton.innerText = "カメラを閉じる";
-                cameraButton.className = "w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-xl shadow-md transition duration-20
+                cameraButton.className = "w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-xl shadow-md transition duration-200 cursor-pointer";
+
+                html5QrcodeScanner = new Html5Qrcode("qr-reader");
+                html5QrcodeScanner.start(
+                    { facingMode: "environment" },
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    (qrText) => {
+                        // スキャン成功時
+                        alert("QRコードを読み取りました: " + qrText);
+                        document.getElementById('input-armor-id').value = qrText;
+                    },
+                    (errorMessage) => { /* スキャン中のエラーは無視 */ }
+                ).catch(err => {
+                    alert("カメラ起動エラー: 権限を許可してください。");
+                    console.error(err);
+                });
+            }
+        });
+
+
+        // --- 3. 移動確定と自動仕分け処理 ---
+        document.getElementById('btn-submit').addEventListener('click', () => {
+            const armorId = document.getElementById('input-armor-id').value.trim().toUpperCase();
+            const location = document.getElementById('select-location').value;
+
+            if (!armorId) {
+                alert("防具IDを入力、またはQRコードをスキャンしてください。");
+                return;
+            }
+
+            // 【自動仕分け】IDの文字から防具の種類を判別する
+            let type = "";
+            if (armorId.startsWith("MEN")) {
+                type = "men";
+            } else if (armorId.startsWith("DO")) {
+                type = "do";
+            } else {
+                alert("登録されていない防具IDです。'MEN' または 'DO' から始まるIDを使用してください。");
+                return;
+            }
+
+            // 一度すべての拠点から在庫を引く（簡易的な所在移動シミュレーション）
+            // ※本来は現在の場所を特定して移動させますが、今回は簡易版としてどこを選んでも上書きカウントします。
+            armorData[type][location] += 1;
+
+            // スマホに保存して画面を更新
+            saveToStorage();
+
+            alert(`防具 ${armorId} を ${document.getElementById('select-location').options[document.getElementById('select-location').selectedIndex].text} に登録しました！`);
+            
+            // 入力欄をクリア
+            document.getElementById('input-armor-id').value = "";
+        });
+    </script>
+</body>
+</html>
