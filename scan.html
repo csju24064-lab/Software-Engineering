@@ -102,42 +102,35 @@
 
     <script>
         // ==========================================
-        // ⚙️ 【初期設定】空手部の防具5種類を登録！
+        // ⚙️ 【初期設定】空手部の防具5種類
         // ==========================================
         const initialArmorList = [
-            // 面（MEN-001〜003は御茶ノ水、004〜005は船橋）
             { id: "MEN-001", type: "面", location: "御茶ノ水" },
             { id: "MEN-002", type: "面", location: "御茶ノ水" },
             { id: "MEN-003", type: "面", location: "御茶ノ水" },
             { id: "MEN-004", type: "面", location: "船橋" },
             { id: "MEN-005", type: "面", location: "船橋" },
 
-            // 拳サポ（KEN-サイズ-色-番号 のご指定ルール）
             { id: "KEN-M-赤-001", type: "拳サポ", location: "船橋" },
             { id: "KEN-M-青-001", type: "拳サポ", location: "船橋" },
             { id: "KEN-L-赤-001", type: "拳サポ", location: "船橋" },
             { id: "KEN-L-青-001", type: "拳サポ", location: "御茶ノ水" },
 
-            // 足サポ（ASI-サイズ-色-番号 のご指定ルール）
             { id: "ASI-M-赤-001", type: "足サポ", location: "船橋" },
             { id: "ASI-M-青-001", type: "足サポ", location: "船橋" },
             { id: "ASI-L-赤-001", type: "足サポ", location: "御茶ノ水" },
             { id: "ASI-L-青-001", type: "足サポ", location: "船橋" },
 
-            // ファールカップ (FC)
             { id: "FC-001", type: "ファールカップ", location: "船橋" },
             { id: "FC-002", type: "ファールカップ", location: "船橋" },
 
-            // 胴当て (DO)
             { id: "DO-001", type: "胴当て", location: "船橋" },
             { id: "DO-002", type: "胴当て", location: "船橋" }
         ];
 
-        // データ保存と読み込み（LocalStorage）
         let armorItems = JSON.parse(localStorage.getItem('karateArmorItemsV2')) || initialArmorList;
 
         function updateDisplay() {
-            // 各防具のカウント初期化
             const counts = {
                 men: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
                 ken: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
@@ -150,14 +143,12 @@
             tableBody.innerHTML = ""; 
 
             armorItems.forEach(item => {
-                // IDの頭文字からどの種類の防具か判定してカウント
                 if (item.id.startsWith("MEN")) counts.men[item.location]++;
                 else if (item.id.startsWith("KEN")) counts.ken[item.location]++;
                 else if (item.id.startsWith("ASI")) counts.asi[item.location]++;
                 else if (item.id.startsWith("FC"))  counts.fc[item.location]++;
                 else if (item.id.startsWith("DO"))  counts.do[item.location]++;
 
-                // テーブル表示作成
                 const row = document.createElement('tr');
                 let badgeColor = "bg-gray-100 text-gray-800";
                 if(item.location === "船橋") badgeColor = "bg-blue-100 text-blue-800 font-medium";
@@ -172,7 +163,6 @@
                 tableBody.appendChild(row);
             });
 
-            // 集計数値を反映
             document.getElementById('total-men-funabashi').innerText = counts.men["船橋"];
             document.getElementById('total-men-surugadai').innerText = counts.men["御茶ノ水"];
             document.getElementById('total-men-ensei').innerText = counts.men["遠征"];
@@ -201,28 +191,47 @@
 
         updateDisplay();
 
+
         // --- QRコードカメラの制御 ---
         let html5QrcodeScanner = null;
+        let isScanning = false; // 連続読み込みを防ぐためのロック用変数
         const cameraButton = document.getElementById('btn-toggle-camera');
         const qrReaderDiv = document.getElementById('qr-reader');
 
-        cameraButton.addEventListener('click', () => {
+        function stopCamera() {
             if (html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => {
+                return html5QrcodeScanner.stop().then(() => {
                     html5QrcodeScanner = null;
                     qrReaderDiv.classList.add('hidden');
                     cameraButton.innerText = "📷 QRスキャンを起動する";
-                }).catch(err => console.error(err));
+                    isScanning = false;
+                });
+            }
+            return Promise.resolve();
+        }
+
+        cameraButton.addEventListener('click', () => {
+            if (html5QrcodeScanner) {
+                stopCamera().catch(err => console.error(err));
             } else {
                 qrReaderDiv.classList.remove('hidden');
                 cameraButton.innerText = "カメラを閉じる";
+                isScanning = false;
+
                 html5QrcodeScanner = new Html5Qrcode("qr-reader");
                 html5QrcodeScanner.start(
                     { facingMode: "environment" },
                     { fps: 10, qrbox: { width: 250, height: 250 } },
                     (qrText) => {
-                        alert("QRコード検出: " + qrText);
-                        document.getElementById('input-armor-id').value = qrText.toUpperCase();
+                        // ロックがかかっていればスキャン処理をスルーする
+                        if (isScanning) return; 
+                        isScanning = true; // ロックをかける
+
+                        // 1回読んだらカメラを一時停止・終了させる
+                        stopCamera().then(() => {
+                            alert("QRコード検出: " + qrText);
+                            document.getElementById('input-armor-id').value = qrText.toUpperCase();
+                        });
                     },
                     (errorMessage) => {}
                 ).catch(err => alert("カメラ起動エラー、権限を確認してください。"));
