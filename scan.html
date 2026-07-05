@@ -12,7 +12,7 @@
     <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden p-6 space-y-8">
         <header class="text-center border-b pb-4">
             <h1 class="text-2xl font-bold text-blue-600 flex justify-center items-center gap-2">
-                🥋 空手部 防具管理 (全部員リアルタイム同期)
+                🥋 空手部 防具管理 (学内アカウント同期版)
             </h1>
             <p class="text-sm text-gray-500 mt-1">Googleスプレッドシートと直結して全員で在庫を共有</p>
         </header>
@@ -105,33 +105,48 @@
     </div>
 
     <script>
-        // 🚨 【超重要】ここにGoogle Apps ScriptでコピーしたウェブアプリURLを貼り付けてください！
-        const GAS_URL = "https://script.google.com/a/macros/g.nihon-u.ac.jp/s/AKfycbwvqGXwa41U8QzYG1B1pWTyfAacKgQAEyhQPCugsND1nEC5kiGG1XlzIQi6pffoxNJX/exec";
+        // 🚨 【重要】ここに最新のウェブアプリURLを貼り付けてください！
+        const GAS_URL = "https://script.google.com/a/macros/g.nihon-u.ac.jp/s/AKfycbwV8KwgI8wx-NKQ5DN1A1WbbkVuv-Ncbtj_rFAZBiFq5iSpHDnqx63SrmPwgwIUITv7/exec";
 
         let armorItems = [];
 
-        // スプレッドシートから最新データを引っ張ってくる関数
+        // 💡 学内アカウント制限を回避するJSONP通信用の関数
         function fetchFromSpreadsheet() {
             document.getElementById('loading-bar').classList.remove('hidden');
-            fetch(GAS_URL)
-                .then(res => res.json())
-                .then(data => {
-                    armorItems = data;
-                    updateDisplay();
-                    document.getElementById('loading-bar').classList.add('hidden');
-                })
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById('loading-bar').classList.add('hidden');
-                });
+            
+            // 古いスクリプトタグがあれば削除
+            const oldScript = document.getElementById('gas-jsonp');
+            if (oldScript) oldScript.remove();
+
+            // 新しいスクリプトタグを作ってデータを引っ張る
+            const script = document.createElement('script');
+            script.id = 'gas-jsonp';
+            script.src = `${GAS_URL}?callback=handleGASResponse`;
+            document.body.appendChild(script);
         }
+
+        // 💡 データを受け取った後の処理
+        window.handleGASResponse = function(data) {
+            if (data && data.status) {
+                if (data.status === "success") {
+                    alert("同期成功: 移動を記録しました！");
+                    fetchFromSpreadsheet();
+                } else {
+                    alert("エラー: 更新に失敗しました。");
+                }
+            } else {
+                armorItems = data;
+                updateDisplay();
+            }
+            document.getElementById('loading-bar').classList.add('hidden');
+        };
 
         function updateDisplay() {
             const counts = {
                 men: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
                 ken: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
                 asi: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
-                fc:  { 船橋: 0, 御茶ノ水: 0, 远征: 0, 遠征: 0 },
+                fc:  { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
                 do:  { 船橋: 0, 御茶ノ水: 0, 遠征: 0 }
             };
 
@@ -176,7 +191,6 @@
             document.getElementById('total-do-ensei').innerText = counts.do["遠征"] || 0;
         }
 
-        // 初回読み込み
         fetchFromSpreadsheet();
         document.getElementById('btn-refresh').addEventListener('click', fetchFromSpreadsheet);
 
@@ -221,7 +235,7 @@
             }
         });
 
-        // --- スプレッドシートへ送信して移動を確定する処理 ---
+        // --- 移動確定処理 ---
         document.getElementById('btn-submit').addEventListener('click', () => {
             const armorId = document.getElementById('input-armor-id').value.trim().toUpperCase();
             const newLocation = document.getElementById('select-location').value;
@@ -233,31 +247,16 @@
 
             const foundItem = armorItems.find(item => item.id === armorId);
             if (!foundItem) {
-                alert(`エラー:「${armorId}」はスプレッドシートに登録されていません。`);
+                alert(`エラー:「${armorId}」は登録されていません。`);
                 return;
             }
 
             document.getElementById('loading-bar').classList.remove('hidden');
 
-            // Googleスプレッドシートへデータ送信
-            fetch(GAS_URL, {
-                method: "POST",
-                body: JSON.stringify({ id: armorId, location: newLocation })
-            })
-            .then(res => res.json())
-            .then(result => {
-                if (result.status === "success") {
-                    alert(`同期成功: ${armorId} を [${newLocation}] に移動しました！`);
-                    fetchFromSpreadsheet(); // スプレッドシートから最新状態を再取得
-                } else {
-                    alert("エラー: スプレッドシートの更新に失敗しました。");
-                    document.getElementById('loading-bar').classList.add('hidden');
-                }
-            })
-            .catch(err => {
-                alert("通信エラーが発生しました。");
-                document.getElementById('loading-bar').classList.add('hidden');
-            });
+            // 💡 学内アカウント制限を回避するため、こちらもURL経由で送信
+            const script = document.createElement('script');
+            script.src = `${GAS_URL}?callback=handleGASResponse&id=${encodeURIComponent(armorId)}&location=${encodeURIComponent(newLocation)}`;
+            document.body.appendChild(script);
 
             document.getElementById('input-armor-id').value = "";
         });
