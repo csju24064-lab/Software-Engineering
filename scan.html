@@ -105,27 +105,21 @@
     </div>
 
     <script>
-        // 🚨 【重要】ここに最新のウェブアプリURLを貼り付けてください！
         const GAS_URL = "https://script.google.com/a/macros/g.nihon-u.ac.jp/s/AKfycbwV8KwgI8wx-NKQ5DN1A1WbbkVuv-Ncbtj_rFAZBiFq5iSpHDnqx63SrmPwgwIUITv7/exec";
 
         let armorItems = [];
 
-        // 💡 学内アカウント制限を回避するJSONP通信用の関数
         function fetchFromSpreadsheet() {
             document.getElementById('loading-bar').classList.remove('hidden');
-            
-            // 古いスクリプトタグがあれば削除
             const oldScript = document.getElementById('gas-jsonp');
             if (oldScript) oldScript.remove();
 
-            // 新しいスクリプトタグを作ってデータを引っ張る
             const script = document.createElement('script');
             script.id = 'gas-jsonp';
             script.src = `${GAS_URL}?callback=handleGASResponse`;
             document.body.appendChild(script);
         }
 
-        // 💡 データを受け取った後の処理
         window.handleGASResponse = function(data) {
             if (data && data.status) {
                 if (data.status === "success") {
@@ -194,7 +188,6 @@
         fetchFromSpreadsheet();
         document.getElementById('btn-refresh').addEventListener('click', fetchFromSpreadsheet);
 
-        // --- QRコードカメラの制御 ---
         let html5QrcodeScanner = null;
         let isScanning = false; 
         const cameraButton = document.getElementById('btn-toggle-camera');
@@ -235,7 +228,6 @@
             }
         });
 
-        // --- 移動確定処理 ---
         document.getElementById('btn-submit').addEventListener('click', () => {
             const armorId = document.getElementById('input-armor-id').value.trim().toUpperCase();
             const newLocation = document.getElementById('select-location').value;
@@ -253,7 +245,6 @@
 
             document.getElementById('loading-bar').classList.remove('hidden');
 
-            // 💡 学内アカウント制限を回避するため、こちらもURL経由で送信
             const script = document.createElement('script');
             script.src = `${GAS_URL}?callback=handleGASResponse&id=${encodeURIComponent(armorId)}&location=${encodeURIComponent(newLocation)}`;
             document.body.appendChild(script);
