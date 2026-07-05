@@ -12,29 +12,43 @@
     <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden p-6 space-y-8">
         <header class="text-center border-b pb-4">
             <h1 class="text-2xl font-bold text-blue-600 flex justify-center items-center gap-2">
-                🥋 空手部 防具管理 (個別追跡版)
+                🥋 空手部 防具管理システム
             </h1>
-            <p class="text-sm text-gray-500 mt-1">あらかじめ登録した防具の所在をリアルタイム管理</p>
+            <p class="text-sm text-gray-500 mt-1">5種類の防具・全拠点のリアルタイム在庫管理</p>
         </header>
 
         <section>
             <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">📊 拠点別の合計在庫</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-blue-50 p-4 rounded-xl">
-                    <span class="font-bold text-blue-800 block mb-2">面 (MEN) 合計</span>
-                    <div class="grid grid-cols-3 gap-1 text-center text-xs">
-                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">船橋</div><div id="total-men-funabashi" class="text-base font-bold">0</div></div>
-                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">御茶ノ水</div><div id="total-men-surugadai" class="text-base font-bold">0</div></div>
-                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">遠征</div><div id="total-men-ensei" class="text-base font-bold">0</div></div>
-                    </div>
+            <div class="space-y-3">
+                <div class="bg-blue-50 p-3 rounded-xl grid grid-cols-4 items-center gap-2 text-sm">
+                    <span class="font-bold text-blue-800">① 面 (MEN)</span>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">船橋</div><div id="total-men-funabashi" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">御茶ノ水</div><div id="total-men-surugadai" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">遠征</div><div id="total-men-ensei" class="font-bold">0</div></div>
                 </div>
-                <div class="bg-green-50 p-4 rounded-xl">
-                    <span class="font-bold text-green-800 block mb-2">胴 (DO) 合計</span>
-                    <div class="grid grid-cols-3 gap-1 text-center text-xs">
-                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">船橋</div><div id="total-do-funabashi" class="text-base font-bold">0</div></div>
-                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">御茶ノ水</div><div id="total-do-surugadai" class="text-base font-bold">0</div></div>
-                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">遠征</div><div id="total-do-ensei" class="text-base font-bold">0</div></div>
-                    </div>
+                <div class="bg-red-50 p-3 rounded-xl grid grid-cols-4 items-center gap-2 text-sm">
+                    <span class="font-bold text-red-800">② 拳サポ (KEN)</span>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">船橋</div><div id="total-ken-funabashi" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">御茶ノ水</div><div id="total-ken-surugadai" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">遠征</div><div id="total-ken-ensei" class="font-bold">0</div></div>
+                </div>
+                <div class="bg-orange-50 p-3 rounded-xl grid grid-cols-4 items-center gap-2 text-sm">
+                    <span class="font-bold text-orange-800">③ 足サポ (ASI)</span>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">船橋</div><div id="total-asi-funabashi" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">御茶ノ水</div><div id="total-asi-surugadai" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">遠征</div><div id="total-asi-ensei" class="font-bold">0</div></div>
+                </div>
+                <div class="bg-purple-50 p-3 rounded-xl grid grid-cols-4 items-center gap-2 text-sm">
+                    <span class="font-bold text-purple-800">④ カップ (FC)</span>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">船橋</div><div id="total-fc-funabashi" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">御茶ノ水</div><div id="total-fc-surugadai" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">遠征</div><div id="total-fc-ensei" class="font-bold">0</div></div>
+                </div>
+                <div class="bg-green-50 p-3 rounded-xl grid grid-cols-4 items-center gap-2 text-sm">
+                    <span class="font-bold text-green-800">⑤ 胴当て (DO)</span>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">船橋</div><div id="total-do-funabashi" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">御茶ノ水</div><div id="total-do-surugadai" class="font-bold">0</div></div>
+                    <div class="bg-white p-1 rounded text-center shadow-2xs"><div class="text-gray-500 text-xs">遠征</div><div id="total-do-ensei" class="font-bold">0</div></div>
                 </div>
             </div>
         </section>
@@ -51,8 +65,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">防具ID</label>
-                    <input type="text" id="input-armor-id" placeholder="例: MEN-001" class="w-full border rounded-lg px-3 py-2 bg-white font-mono uppercase">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">防具ID (スキャン、または手入力)</label>
+                    <input type="text" id="input-armor-id" placeholder="例: KEN-L-赤-001" class="w-full border rounded-lg px-3 py-2 bg-white font-mono uppercase">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">新しい移動先</label>
@@ -70,9 +84,9 @@
 
         <section>
             <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">📋 各防具の現在地一覧</h2>
-            <div class="border rounded-xl overflow-hidden shadow-xs">
+            <div class="border rounded-xl overflow-hidden shadow-xs max-h-96 overflow-y-auto">
                 <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-100 text-gray-600 font-bold border-b">
+                    <thead class="bg-gray-100 text-gray-600 font-bold border-b sticky top-0">
                         <tr>
                             <th class="p-3">防具ID</th>
                             <th class="p-3">種類</th>
@@ -88,44 +102,62 @@
 
     <script>
         // ==========================================
-        // ⚙️ 【ご要望の初期設定】
-        // MEN-001, 002, 003 を御茶ノ水、それ以外を船橋に配置
+        // ⚙️ 【初期設定】空手部の防具5種類を登録！
         // ==========================================
         const initialArmorList = [
+            // 面（MEN-001〜003は御茶ノ水、004〜005は船橋）
             { id: "MEN-001", type: "面", location: "御茶ノ水" },
             { id: "MEN-002", type: "面", location: "御茶ノ水" },
             { id: "MEN-003", type: "面", location: "御茶ノ水" },
             { id: "MEN-004", type: "面", location: "船橋" },
             { id: "MEN-005", type: "面", location: "船橋" },
-            { id: "DO-001",  type: "胴", location: "船橋" },
-            { id: "DO-002",  type: "胴", location: "船橋" },
-            { id: "DO-003",  type: "胴", location: "船橋" }
+
+            // 拳サポ（KEN-サイズ-色-番号 のご指定ルール）
+            { id: "KEN-M-赤-001", type: "拳サポ", location: "船橋" },
+            { id: "KEN-M-青-001", type: "拳サポ", location: "船橋" },
+            { id: "KEN-L-赤-001", type: "拳サポ", location: "船橋" },
+            { id: "KEN-L-青-001", type: "拳サポ", location: "御茶ノ水" },
+
+            // 足サポ（ASI-サイズ-色-番号 のご指定ルール）
+            { id: "ASI-M-赤-001", type: "足サポ", location: "船橋" },
+            { id: "ASI-M-青-001", type: "足サポ", location: "船橋" },
+            { id: "ASI-L-赤-001", type: "足サポ", location: "御茶ノ水" },
+            { id: "ASI-L-青-001", type: "足サポ", location: "船橋" },
+
+            // ファールカップ (FC)
+            { id: "FC-001", type: "ファールカップ", location: "船橋" },
+            { id: "FC-002", type: "ファールカップ", location: "船橋" },
+
+            // 胴当て (DO)
+            { id: "DO-001", type: "胴当て", location: "船橋" },
+            { id: "DO-002", type: "胴当て", location: "船橋" }
         ];
 
         // データ保存と読み込み（LocalStorage）
-        let armorItems = JSON.parse(localStorage.getItem('karateArmorItems')) || initialArmorList;
+        let armorItems = JSON.parse(localStorage.getItem('karateArmorItemsV2')) || initialArmorList;
 
-        // 画面の数字とテーブルを最新状態に更新する関数
         function updateDisplay() {
-            // カウントの初期化
+            // 各防具のカウント初期化
             const counts = {
                 men: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
-                do: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 }
+                ken: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
+                asi: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
+                fc:  { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
+                do:  { 船橋: 0, 御茶ノ水: 0, 遠征: 0 }
             };
 
             const tableBody = document.getElementById('armor-list-table');
             tableBody.innerHTML = ""; 
 
-            // 登録データを1個ずつループ処理
             armorItems.forEach(item => {
-                // 1. 拠点ごとの合計をカウント
-                if (item.id.startsWith("MEN")) {
-                    counts.men[item.location]++;
-                } else if (item.id.startsWith("DO")) {
-                    counts.do[item.location]++;
-                }
+                // IDの頭文字からどの種類の防具か判定してカウント
+                if (item.id.startsWith("MEN")) counts.men[item.location]++;
+                else if (item.id.startsWith("KEN")) counts.ken[item.location]++;
+                else if (item.id.startsWith("ASI")) counts.asi[item.location]++;
+                else if (item.id.startsWith("FC"))  counts.fc[item.location]++;
+                else if (item.id.startsWith("DO"))  counts.do[item.location]++;
 
-                // 2. 下部の一覧表テーブルを作成
+                // テーブル表示作成
                 const row = document.createElement('tr');
                 let badgeColor = "bg-gray-100 text-gray-800";
                 if(item.location === "船橋") badgeColor = "bg-blue-100 text-blue-800 font-medium";
@@ -134,29 +166,40 @@
 
                 row.innerHTML = `
                     <td class="p-3 font-mono font-bold">${item.id}</td>
-                    <td class="p-3">${item.type}</td>
+                    <td class="p-3 text-xs text-gray-600">${item.type}</td>
                     <td class="p-3"><span class="px-2.5 py-1 rounded-full text-xs ${badgeColor}">${item.location}</span></td>
                 `;
                 tableBody.appendChild(row);
             });
 
-            // 集計数値を画面に反映
+            // 集計数値を反映
             document.getElementById('total-men-funabashi').innerText = counts.men["船橋"];
             document.getElementById('total-men-surugadai').innerText = counts.men["御茶ノ水"];
             document.getElementById('total-men-ensei').innerText = counts.men["遠征"];
+
+            document.getElementById('total-ken-funabashi').innerText = counts.ken["船橋"];
+            document.getElementById('total-ken-surugadai').innerText = counts.ken["御茶ノ水"];
+            document.getElementById('total-ken-ensei').innerText = counts.ken["遠征"];
+
+            document.getElementById('total-asi-funabashi').innerText = counts.asi["船橋"];
+            document.getElementById('total-asi-surugadai').innerText = counts.asi["御茶ノ水"];
+            document.getElementById('total-asi-ensei').innerText = counts.asi["遠征"];
+
+            document.getElementById('total-fc-funabashi').innerText = counts.fc["船橋"];
+            document.getElementById('total-fc-surugadai').innerText = counts.fc["御茶ノ水"];
+            document.getElementById('total-fc-ensei').innerText = counts.fc["遠征"];
+
             document.getElementById('total-do-funabashi').innerText = counts.do["船橋"];
             document.getElementById('total-do-surugadai').innerText = counts.do["御茶ノ水"];
             document.getElementById('total-do-ensei').innerText = counts.do["遠征"];
         }
 
         function saveToStorage() {
-            localStorage.setItem('karateArmorItems', JSON.stringify(armorItems));
+            localStorage.setItem('karateArmorItemsV2', JSON.stringify(armorItems));
             updateDisplay();
         }
 
-        // 初回読み込み表示
         updateDisplay();
-
 
         // --- QRコードカメラの制御 ---
         let html5QrcodeScanner = null;
@@ -186,8 +229,7 @@
             }
         });
 
-
-        // --- 移動確定ボタンを押したときの処理 ---
+        // --- 移動確定処理 ---
         document.getElementById('btn-submit').addEventListener('click', () => {
             const armorId = document.getElementById('input-armor-id').value.trim().toUpperCase();
             const newLocation = document.getElementById('select-location').value;
@@ -197,7 +239,6 @@
                 return;
             }
 
-            // 登録されているリストから一致する防具を探す
             const foundItem = armorItems.find(item => item.id === armorId);
 
             if (foundItem) {
@@ -207,13 +248,12 @@
                     return;
                 }
                 
-                // 所在地の書き換え
                 foundItem.location = newLocation;
                 saveToStorage();
 
                 alert(`成功: ${armorId} を [${oldLocation}] ➔ [${newLocation}] へ移動しました！`);
             } else {
-                alert(`エラー:「${armorId}」はシステムにあらかじめ登録されていません。リストにある正しいIDを入れてください。`);
+                alert(`エラー:「${armorId}」はシステム未登録です。大文字小文字・ハイフンを確認してください。`);
             }
 
             document.getElementById('input-armor-id').value = "";
