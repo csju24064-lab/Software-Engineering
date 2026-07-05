@@ -24,7 +24,7 @@
                     <span class="font-bold text-blue-800 block mb-2">面 (MEN) 合計</span>
                     <div class="grid grid-cols-3 gap-1 text-center text-xs">
                         <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">船橋</div><div id="total-men-funabashi" class="text-base font-bold">0</div></div>
-                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">駿河台</div><div id="total-men-surugadai" class="text-base font-bold">0</div></div>
+                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">御茶ノ水</div><div id="total-men-surugadai" class="text-base font-bold">0</div></div>
                         <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">遠征</div><div id="total-men-ensei" class="text-base font-bold">0</div></div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                     <span class="font-bold text-green-800 block mb-2">胴 (DO) 合計</span>
                     <div class="grid grid-cols-3 gap-1 text-center text-xs">
                         <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">船橋</div><div id="total-do-funabashi" class="text-base font-bold">0</div></div>
-                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">駿河台</div><div id="total-do-surugadai" class="text-base font-bold">0</div></div>
+                        <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">御茶ノ水</div><div id="total-do-surugadai" class="text-base font-bold">0</div></div>
                         <div class="bg-white p-2 rounded shadow-2xs"><div class="text-gray-500">遠征</div><div id="total-do-ensei" class="text-base font-bold">0</div></div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                     <label class="block text-xs font-bold text-gray-600 mb-1">新しい移動先</label>
                     <select id="select-location" class="w-full border rounded-lg px-3 py-2 bg-white font-medium cursor-pointer">
                         <option value="船橋">船橋キャンパス</option>
-                        <option value="駿河台">駿河台キャンパス</option>
+                        <option value="御茶ノ水">御茶ノ水（駿河台）</option>
                         <option value="遠征">遠征（持ち出し）</option>
                     </select>
                 </div>
@@ -88,17 +88,18 @@
 
     <script>
         // ==========================================
-        // ⚙️ 【初期設定】ここに部活の防具をあらかじめ登録します！
+        // ⚙️ 【ご要望の初期設定】
+        // MEN-001, 002, 003 を御茶ノ水、それ以外を船橋に配置
         // ==========================================
         const initialArmorList = [
-            { id: "MEN-001", type: "面", location: "船橋" },
-            { id: "MEN-002", type: "面", location: "船橋" },
-            { id: "MEN-003", type: "面", location: "駿河台" },
-            { id: "MEN-004", type: "面", location: "駿河台" },
-            { id: "MEN-005", type: "面", location: "遠征" },
+            { id: "MEN-001", type: "面", location: "御茶ノ水" },
+            { id: "MEN-002", type: "面", location: "御茶ノ水" },
+            { id: "MEN-003", type: "面", location: "御茶ノ水" },
+            { id: "MEN-004", type: "面", location: "船橋" },
+            { id: "MEN-005", type: "面", location: "船橋" },
             { id: "DO-001",  type: "胴", location: "船橋" },
-            { id: "DO-002",  type: "胴", location: "駿河台" },
-            { id: "DO-003",  type: "胴", location: "遠征" }
+            { id: "DO-002",  type: "胴", location: "船橋" },
+            { id: "DO-003",  type: "胴", location: "船橋" }
         ];
 
         // データ保存と読み込み（LocalStorage）
@@ -108,12 +109,12 @@
         function updateDisplay() {
             // カウントの初期化
             const counts = {
-                men: { 船橋: 0, 駿河台: 0, 遠征: 0 },
-                do: { 船橋: 0, 駿河台: 0, 遠征: 0 }
+                men: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 },
+                do: { 船橋: 0, 御茶ノ水: 0, 遠征: 0 }
             };
 
             const tableBody = document.getElementById('armor-list-table');
-            tableBody.innerHTML = ""; // 一旦リストを空に
+            tableBody.innerHTML = ""; 
 
             // 登録データを1個ずつループ処理
             armorItems.forEach(item => {
@@ -128,7 +129,7 @@
                 const row = document.createElement('tr');
                 let badgeColor = "bg-gray-100 text-gray-800";
                 if(item.location === "船橋") badgeColor = "bg-blue-100 text-blue-800 font-medium";
-                if(item.location === "駿河台") badgeColor = "bg-purple-100 text-purple-800 font-medium";
+                if(item.location === "御茶ノ水") badgeColor = "bg-purple-100 text-purple-800 font-medium";
                 if(item.location === "遠征") badgeColor = "bg-amber-100 text-amber-800 font-medium";
 
                 row.innerHTML = `
@@ -141,10 +142,10 @@
 
             // 集計数値を画面に反映
             document.getElementById('total-men-funabashi').innerText = counts.men["船橋"];
-            document.getElementById('total-men-surugadai').innerText = counts.men["駿河台"];
+            document.getElementById('total-men-surugadai').innerText = counts.men["御茶ノ水"];
             document.getElementById('total-men-ensei').innerText = counts.men["遠征"];
             document.getElementById('total-do-funabashi').innerText = counts.do["船橋"];
-            document.getElementById('total-do-surugadai').innerText = counts.do["駿河台"];
+            document.getElementById('total-do-surugadai').innerText = counts.do["御茶ノ水"];
             document.getElementById('total-do-ensei').innerText = counts.do["遠征"];
         }
 
@@ -206,7 +207,7 @@
                     return;
                 }
                 
-                // 所在地の書き換え（ワープ処理）
+                // 所在地の書き換え
                 foundItem.location = newLocation;
                 saveToStorage();
 
